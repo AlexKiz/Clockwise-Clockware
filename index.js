@@ -5,9 +5,11 @@ const cityRouter = require('./routes/city.router')
 const masterRouter = require('./routes/master.router')
 const orderRouter = require('./routes/order.router')
 const userRouter = require('./routes/user.router')
+const cors = require('cors')
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
 
@@ -20,3 +22,4 @@ app.use('/api', userRouter)
 app.listen(PORT, () => {
     console.log(`Server has been started on port ${PORT} `)
 })
+

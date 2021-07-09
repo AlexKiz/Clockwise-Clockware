@@ -21,6 +21,19 @@ class MasterController {
     }
 
 
+    async getAvailableMasters(req, res) {
+        
+        const {city_id} = req.query
+        
+        const readAvailableMasters = await db.query('SELECT masters.* FROM masters LEFT JOIN cities ON masters.city_id = cities.id WHERE masters.city_id = $1',[city_id])
+
+        res.status(200).json(readAvailableMasters.rows)
+        
+    }
+
+
+
+
     async putMaster(req, res) {
         
         const {id, name, rating, city_id} = req.body

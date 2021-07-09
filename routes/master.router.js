@@ -4,6 +4,7 @@ const masterController = require('../controller/master.controller')
 
 router.post('/master', masterController.postMaster)
 router.get('/master', masterController.getMaster)
+router.get('/availableMasters', masterController.getAvailableMasters)
 router.put('/master', masterController.putMaster)
 router.delete('/master', masterController.deleteMaster)
 
