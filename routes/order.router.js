@@ -4,7 +4,7 @@ const orderController = require('../controller/order.controller')
 
 router.post('/order', orderController.postOrder)
 router.get('/order', orderController.getOrder)
-router.get('/clocks', orderController.getClockSize)
+router.get('/clocks', orderController.getClocks)
 router.put('/order', orderController.putOrder)
 router.delete('/order', orderController.deleteOrder)
 

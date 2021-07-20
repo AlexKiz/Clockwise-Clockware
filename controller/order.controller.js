@@ -12,7 +12,7 @@ class OrderController {
 
 
         let date = new Date(`${start_work_at}`)
-        date.setUTCHours(date.getHours() + installing_time)
+        date.setUTCHours(date.getHours() + installation_time)
         const end_work_at = date.toISOString()
 
         let user_id
@@ -46,7 +46,7 @@ class OrderController {
 
         const readClocks = await db.query('SELECT * FROM clocks')
 
-        res.status(200).json(readClockSize.rows)
+        res.status(200).json(readClocks.rows)
     }
 
     
