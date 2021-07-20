@@ -10,4 +10,5 @@ const pool = new Pool.Pool ({
     database: process.env.DB_DATABASE
 })
 
+
 module.exports = pool 
