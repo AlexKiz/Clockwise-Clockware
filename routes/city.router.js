@@ -1,11 +1,11 @@
 const Router = require('express')
 const router = new Router()
-const cityController = require('../controller/city.controller')
+const {postCity, getCity, putCity, deleteCity} = require('../controller/city.controller')
 
-router.post('/city', cityController.postCity)
-router.get('/city', cityController.getCity)
-router.put('/city', cityController.putCity)
-router.delete('/city', cityController.deleteCity)
+router.post('/city', postCity)
+router.get('/city', getCity)
+router.put('/city', putCity)
+router.delete('/city', deleteCity)
 
 
 

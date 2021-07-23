@@ -2,14 +2,12 @@ const { fdatasync } = require('fs')
 const { queryResult } = require('pg-promise')
 const db = require('../db')
 
-class OrderController {
-
-    async postOrder(req, res) {
+const postOrder = async (req, res) => {
         
+    try {
         const {clocks_id, city_id, master_id, start_work_at, name, email} = req.body
         const durationTime = await db.query('SELECT installation_time FROM clocks WHERE id = $1',[clocks_id])
         const { installation_time } = durationTime.rows[0]
-
 
         let date = new Date(`${start_work_at}`)
         date.setUTCHours(date.getHours() + installation_time)
@@ -24,51 +22,78 @@ class OrderController {
 
         if(!userId.rows.length) {
             const createUser = await db.query('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email])
-            console.log(createUser)
             user_id = createUser.rows[0].id
         }
 
         const createOrder = await db.query('INSERT INTO orders (clocks_id, user_id, city_id, master_id, start_work_at, end_work_at) VALUES ($1, $2, $3, $4, $5, $6)', [clocks_id, user_id, city_id, master_id, start_work_at, end_work_at])
 
         res.status(201).json(createOrder.rows)
+
+    } catch(error) {
+
+        res.status(500).send(error)
     }
+}
 
 
-    async getOrder(req, res) {
+const getOrder = async (req, res) => {
 
+    try {
         const readOrder = await db.query('SELECT * FROM orders')
 
         res.status(200).json(readOrder.rows)
+
+    } catch(error) {
+
+        res.status(500).send(error)
     }
+}
 
 
-    async getClocks(req, res) {
+const getClocks = async (req, res) => {
+
+    try {
 
         const readClocks = await db.query('SELECT * FROM clocks')
 
         res.status(200).json(readClocks.rows)
+        
+    } catch(err) {
+
+        res.status(500).console.log(err)
     }
+}
 
-    
-    async putOrder(req, res) {
 
+const putOrder = async (req, res) => {
+
+    try {
         const {id, clocks_id, user_id, city_id, master_id, start_work_at} = req.body
 
         const updateOrder = await db.query('UPDATE orders SET clocks_id = $2, user_id = $3, city_id = $4, master_id = $5, start_work_at = $6 WHERE id = $1', [id, clocks_id, user_id, city_id, master_id, start_work_at])
 
         res.status(201).json(updateOrder.rows)
+
+    } catch(error) {
+
+        res.status(500).send()
     }
+}
 
 
-    async deleteOrder(req, res) {
+const deleteOrder = async (req, res) => {
 
+    try {
         const {id} = req.body
 
         const deleteOrder = await db.query('DELETE FROM orders WHERE id = $1', [id])
 
         res.status(210).json(deleteOrder.rows)
-    }
 
+    } catch(error) {
+
+        res.status(500).send(error)
+    }
 }
 
-module.exports = new OrderController()
+module.exports = {postOrder, getOrder, getClocks, putOrder, deleteOrder}

@@ -1,45 +1,70 @@
 const { fdatasync } = require('fs')
 const db = require('../db')
 
-class CityController {
-    
-    async postCity(req, res) {
 
+    
+const postCity = async (req, res) => {
+
+    try {
         const {name} = req.body
 
         const createCity = await db.query('INSERT INTO cities (name) VALUES ($1)', [name])
 
         res.status(201).json(createCity.rows)
+
+    } catch(error) {
+        
+        res.status(500).send(error)
     }
+    
+}
 
 
-    async getCity(req, res) {
+const getCity = async (req, res) => {
 
+    try {
         const readCity = await db.query('SELECT * FROM cities')
 
         res.status(200).json(readCity.rows)
+        
+    } catch(error) {
+
+        res.status(500).send(error)
     }
+}
 
 
-    async putCity(req, res) {
+const putCity = async (req, res) => {
 
+    try {
         const {id,name} = req.body
 
         const updateCity = await db.query('UPDATE cities SET name = $2 WHERE id = $1', [id, name])
 
         res.status(201).json(updateCity.rows)
+
+    } catch(error) {
+
+        res.status(500).send(error)
     }
+}
 
 
-    async deleteCity(req, res) {
+const deleteCity = async (req, res) => {
 
+    try {
         const {id} = req.body
 
         const deleteCity = await db.query('DELETE FROM cities WHERE id = $1', [id])
 
         res.status(204).json(deleteCity.rows)
-    } 
 
-}
+    } catch(error) {
 
-module.exports = new CityController()
+        res.status(500).send(error)
+    }
+} 
+
+
+
+module.exports = {postCity, getCity, putCity, deleteCity}

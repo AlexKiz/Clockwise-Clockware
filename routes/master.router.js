@@ -1,12 +1,12 @@
 const Router = require('express')
 const router = new Router()
-const masterController = require('../controller/master.controller')
+const {postMaster, getMaster, getAvailableMasters, putMaster, deleteMaster} = require('../controller/master.controller')
 
-router.post('/master', masterController.postMaster)
-router.get('/master', masterController.getMaster)
-router.get('/availableMasters', masterController.getAvailableMasters)
-router.put('/master', masterController.putMaster)
-router.delete('/master', masterController.deleteMaster)
+router.post('/master', postMaster)
+router.get('/master', getMaster)
+router.get('/availableMasters', getAvailableMasters)
+router.put('/master', putMaster)
+router.delete('/master', deleteMaster)
 
 
 
