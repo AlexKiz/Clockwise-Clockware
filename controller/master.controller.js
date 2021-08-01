@@ -22,7 +22,7 @@ const postMaster = async (req, res)  => {
 const getMaster = async (req, res) => {
 
     try {
-        const readMaster = await db.query('SELECT * FROM masters')
+        const readMaster = await db.query('SELECT masters.id AS "masterId", masters.name AS "masterName", masters.city_id AS "cityId", masters.rating AS "rating", cities.name AS "cityName" FROM masters LEFT JOIN cities ON masters.city_id = cities.id')
 
         res.status(200).json(readMaster.rows)
         
@@ -73,9 +73,9 @@ const getAvailableMasters = async (req, res) => {
 const putMaster = async (req, res) => {
         
     try {
-        const {id, name, rating, city_id} = req.body
+        const {id, name, city_id} = req.body
 
-        const updateMaster = await db.query('UPDATE masters SET name = $2, rating = $3, city_id = $4 WHERE id = $1', [id, name, rating, city_id])
+        const updateMaster = await db.query('UPDATE masters SET name = $2, city_id = $3 WHERE id = $1', [id, name, city_id])
 
         res.status(201).json(updateMaster.rows)
 
