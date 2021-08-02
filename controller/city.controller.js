@@ -26,7 +26,7 @@ const getCity = async (req, res) => {
         const readCity = await db.query('SELECT * FROM cities')
 
         res.status(200).json(readCity.rows)
-        
+
     } catch(error) {
 
         res.status(500).send(error)
@@ -37,7 +37,7 @@ const getCity = async (req, res) => {
 const putCity = async (req, res) => {
 
     try {
-        const {id,name} = req.body
+        const {id,name} = req.body.data
 
         const updateCity = await db.query('UPDATE cities SET name = $2 WHERE id = $1', [id, name])
 
