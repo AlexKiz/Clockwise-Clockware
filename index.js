@@ -5,6 +5,7 @@ const cityRouter = require('./routes/city.router')
 const masterRouter = require('./routes/master.router')
 const orderRouter = require('./routes/order.router')
 const userRouter = require('./routes/user.router')
+const login = require('./routes/auth.router')
 const cors = require('cors')
 
 const app = express()
@@ -17,6 +18,7 @@ app.use('/api', cityRouter)
 app.use('/api', masterRouter)
 app.use('/api', orderRouter)
 app.use('/api', userRouter)
+app.use('/api', login)
 
 
 app.listen(PORT, () => {

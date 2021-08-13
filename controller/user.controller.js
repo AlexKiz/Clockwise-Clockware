@@ -40,15 +40,15 @@ const putUser = async (req, res) => {
 
         const userChecking = await db.query('SELECT id FROM users WHERE email = $1', [email])
 
-        if (userChecking.rows[0].id === +id) {
-            
+        if ((!userChecking.rows.length) || (userChecking.rows[0].id === +id)) {
+
             const updateUser = await db.query('UPDATE users SET name = $2, email = $3 WHERE id = $1', [id, name, email])
 
-            res.status(201).json(updateUser.rows)
+            res.status(200).json(updateUser.rows)
 
         } else {
 
-            res.status(500).send('User with current email exists')
+            res.status(400).send('User with current email exists')
         }
 
     } catch(error) {

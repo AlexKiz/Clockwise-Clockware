@@ -41,7 +41,7 @@ const putCity = async (req, res) => {
 
         const updateCity = await db.query('UPDATE cities SET name = $2 WHERE id = $1', [id, name])
 
-        res.status(201).json(updateCity.rows)
+        res.status(200).json(updateCity.rows)
 
     } catch(error) {
 

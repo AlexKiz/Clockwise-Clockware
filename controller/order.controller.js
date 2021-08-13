@@ -39,8 +39,9 @@ const postOrder = async (req, res) => {
 const getOrder = async (req, res) => {
 
     try {
-        const readOrder = await db.query('SELECT * FROM orders')
-
+        
+        const readOrder = await db.query('SELECT orders.id as "orderId", orders.clocks_id as "clocksId", orders.user_id as "userId", orders.city_id as "cityId", orders.master_id as "masterId", (TO_CHAR(orders.start_work_at, \'YYYY-MM-DD,HH24:MI\')) as "startWorkAt", (TO_CHAR(orders.end_work_at, \'YYYY-MM-DD HH24:MI\')) as "endWorkAt", clocks.size as "clockSize", users.name as "userName", users.email as "userEmail", cities.name as "cityName", masters.name as "masterName" FROM orders INNER JOIN clocks ON orders.clocks_id = clocks.id INNER JOIN users ON orders.user_id = users.id INNER JOIN cities ON orders.city_id = cities.id INNER JOIN masters ON orders.master_id = masters.id')
+        
         res.status(200).json(readOrder.rows)
 
     } catch(error) {
@@ -72,7 +73,7 @@ const putOrder = async (req, res) => {
 
         const updateOrder = await db.query('UPDATE orders SET clocks_id = $2, user_id = $3, city_id = $4, master_id = $5, start_work_at = $6 WHERE id = $1', [id, clocks_id, user_id, city_id, master_id, start_work_at])
 
-        res.status(201).json(updateOrder.rows)
+        res.status(200).json(updateOrder.rows)
 
     } catch(error) {
 
@@ -88,7 +89,7 @@ const deleteOrder = async (req, res) => {
 
         const deleteOrder = await db.query('DELETE FROM orders WHERE id = $1', [id])
 
-        res.status(210).json(deleteOrder.rows)
+        res.status(204).json(deleteOrder.rows)
 
     } catch(error) {
 
