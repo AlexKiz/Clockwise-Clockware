@@ -1,6 +1,6 @@
 const express = require('express')
 const db = require('./db')
-const PORT = process.env.PORT ?? 5000
+const PORT = process.env.PORT || 5000
 const cityRouter = require('./routes/city.router')
 const masterRouter = require('./routes/master.router')
 const orderRouter = require('./routes/order.router')
@@ -10,8 +10,9 @@ const cors = require('cors')
 
 const app = express()
 
-app.use(cors())
+app.use(cors({exposedHeaders: 'Authorization',}),)
 app.use(express.json())
+
 
 
 app.use('/api', cityRouter)

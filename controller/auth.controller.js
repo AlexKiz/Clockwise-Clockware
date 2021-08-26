@@ -4,19 +4,19 @@ const bcrypt = require('bcrypt')
 
 const Auth = async (req, res) => {
 
-    const {login, password} = req.body
-
-    const credentials = await db.query('SELECT * FROM admin WHERE email = $1', [login])
+    const {adminLogin, adminPassword} = req.body 
+    
+    const credentials = await db.query('SELECT * FROM admin WHERE email = $1', [adminLogin])
     
     if(credentials.rows.length) {
 
         const hashPass = credentials.rows[0].password
 
-        if(await bcrypt.compare(password,hashPass) ) {
+        if(await bcrypt.compare(adminPassword,hashPass)) {
             
-            const accessToken = jwt.sign({ foo: 'bar' }, process.env.PRIVAT_KEY, {expiresIn: '2h'})
+            const accessToken = jwt.sign({}, process.env.PRIVAT_KEY, {expiresIn: '2h'})
             
-            res.set({authorization: `Bearer ${accessToken}`}).status(200).json({message: "Successfully authorizated!"})
+            res.set({Authorization: `Bearer ${accessToken}`}).status(200).json({message: "Successfully authorizated!"})
 
         } else {
 
@@ -36,14 +36,15 @@ const isAuth = async (req, res, next) => {
     }
 
     try {
+        if(req.headers.Authorization) {
+
+        const accessToken = req.headers.Authorization.split(' ')[1]
         
-        const accessToken = req.headers.authorization.split(' ')[1]
-        
-        if(!accessToken) {
+        } else {
 
             res.status(401).send()
         }
-
+        
         jwt.verify(accessToken, proccess.env.PRIVAT_KEY)
 
         next()

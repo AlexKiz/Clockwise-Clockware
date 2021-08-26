@@ -29,7 +29,7 @@ const getCity = async (req, res) => {
 
     } catch(error) {
 
-        res.status(500).send(error)
+        res.status(500).send()
     }
 }
 
@@ -45,7 +45,7 @@ const putCity = async (req, res) => {
 
     } catch(error) {
 
-        res.status(500).send(error)
+        res.status(500).send()
     }
 }
 
@@ -61,7 +61,7 @@ const deleteCity = async (req, res) => {
 
     } catch(error) {
 
-        res.status(500).send(error)
+        res.status(500).send()
     }
 } 
 

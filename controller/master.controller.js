@@ -36,36 +36,40 @@ const getMaster = async (req, res) => {
 const getAvailableMasters = async (req, res) => {
         
     try {
-        const {currentOrderId, city_id, start_work_at, clocks_id} = req.query
-
-        const installDuration = await db.query('SELECT installation_time FROM clocks WHERE id = $1', [clocks_id])
-        const { installation_time } = installDuration.rows[0]
-
-        let date = new Date(`${start_work_at}`)
-        date.setUTCHours(date.getHours() + installation_time)
-        const end_work_at = date.toISOString()
-
-        const readBookedMasters = await db.query('SELECT master_id FROM orders WHERE ((start_work_at <= $1 AND end_work_at >= $1) OR (start_work_at <= $2 AND end_work_at >= $2))', [start_work_at, end_work_at])
-
-        const bookedMastersId = readBookedMasters.rows.map((elem) => elem.master_id)
+        const {city_id, start_work_on, clocks_id} = req.query
         
+        const installDuration = await db.query('SELECT installation_time FROM clocks WHERE id = $1', [clocks_id])
 
-        if(bookedMastersId.length != 0) {
+        if(installDuration.rows.length) {
 
-            const readAvailableMasters = await db.query(`SELECT * FROM masters WHERE city_id = ${city_id} AND id NOT IN (${bookedMastersId.join(',')})`)
+            const { installation_time } = installDuration.rows[0]
+            
+            let date = new Date(`${start_work_on}`)
+            date.setUTCHours(date.getHours() + installation_time)
+            const end_work_on = date.toISOString()
+            
+            const readBookedMasters = await db.query('SELECT master_id FROM orders WHERE ((start_work_on <= $1 AND end_work_on >= $1) OR (start_work_on <= $2 AND end_work_on >= $2))', [start_work_on, end_work_on])
+            
+            const bookedMastersId = readBookedMasters.rows.map((elem) => elem.master_id)
+            
 
-            res.status(200).json(readAvailableMasters.rows)
+            if(bookedMastersId.length != 0) {
 
-        } else {
+                const readAvailableMasters = await db.query(`SELECT * FROM masters WHERE city_id = ${city_id} AND id NOT IN (${bookedMastersId.join(',')})`)
 
-            const readAvailableMasters = await db.query(`SELECT * FROM masters WHERE city_id = ${city_id}`)
+                res.status(200).json(readAvailableMasters.rows)
 
-            res.status(200).json(readAvailableMasters.rows)
+            } else {
+
+                const readAvailableMasters = await db.query(`SELECT * FROM masters WHERE city_id = ${city_id}`)
+
+                res.status(200).json(readAvailableMasters.rows)
+            }
         }
-
+        
     } catch(error) {
 
-        res.status(500).send(error)
+        res.status(500).send()
     }
 }
 
@@ -73,18 +77,18 @@ const getAvailableMasters = async (req, res) => {
 const getAvailableMastersForUpdate = async (req, res) => {
         
     try {
-        const {currentOrderId, city_id, start_work_at, clocks_id} = req.query
+        const {currentOrderId, city_id, start_work_on, clocks_id} = req.query
 
 
         const installDuration = await db.query('SELECT installation_time FROM clocks WHERE id = $1', [clocks_id])
         const { installation_time } = installDuration.rows[0]
 
-        let date = new Date(`${start_work_at}`)
+        let date = new Date(`${start_work_on}`)
         date.setUTCHours(date.getHours() + installation_time)
-        const end_work_at = date.toISOString()
+        const end_work_on = date.toISOString()
 
 
-        const readBookedMasters = await db.query('SELECT master_id FROM orders WHERE ((start_work_at <= $1 AND end_work_at >= $1) OR (start_work_at <= $2 AND end_work_at >= $2)) AND id != $3', [start_work_at, end_work_at, currentOrderId])
+        const readBookedMasters = await db.query('SELECT master_id FROM orders WHERE ((start_work_on <= $1 AND end_work_on >= $1) OR (start_work_on <= $2 AND end_work_on >= $2)) AND id != $3', [start_work_on, end_work_on, currentOrderId])
 
         const bookedMastersId = readBookedMasters.rows.map((elem) => elem.master_id)
 
@@ -104,7 +108,7 @@ const getAvailableMastersForUpdate = async (req, res) => {
 
     } catch(error) {
 
-        res.status(500).send(error)
+        res.status(500).send()
     }
 }
 
@@ -120,7 +124,7 @@ const putMaster = async (req, res) => {
 
     } catch(error) {
 
-        res.status(500).send(error)
+        res.status(500).send()
     }
 }
 
@@ -136,7 +140,7 @@ const deleteMaster = async (req, res) => {
 
     } catch(error) {
 
-        res.status(500).send(error)
+        res.status(500).send()
     }
 }
 
