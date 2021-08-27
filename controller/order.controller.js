@@ -57,9 +57,9 @@ const getOrder = async (req, res) => {
 const getClocks = async (req, res) => {
 
     try {
-
+        
         const readClocks = await db.query('SELECT * FROM clocks')
-
+        
         res.status(200).json(readClocks.rows)
         
     } catch(err) {
