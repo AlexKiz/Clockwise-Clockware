@@ -23,7 +23,7 @@ const Auth = async (req, res) => {
             res.status(400).send('Wrong login or password')
         }
 
-    } else {
+    } else { 
 
         res.status(400).send('Wrong data')
     }
