@@ -6,15 +6,8 @@ const postOrder = async (req, res) => {
         
     try {
         const {clocks_id, city_id, master_id, start_work_on, name, email} = req.body
+        
         const durationTime = await db.query('SELECT installation_time FROM clocks WHERE id = $1',[clocks_id])
-
-        if(installDuration.rows.length) {
-            const { installation_time } = durationTime.rows[0]
-
-            let date = new Date(`${start_work_on}`)
-            date.setUTCHours(date.getHours() + installation_time)
-            const end_work_on = date.toISOString()
-        }
 
         let user_id
         const userId = await db.query('SELECT id FROM users WHERE email = $1', [email])
@@ -28,9 +21,19 @@ const postOrder = async (req, res) => {
             user_id = createUser.rows[0].id
         }
 
-        const createOrder = await db.query('INSERT INTO orders (clocks_id, user_id, city_id, master_id, start_work_on, end_work_on) VALUES ($1, $2, $3, $4, $5, $6)', [clocks_id, user_id, city_id, master_id, start_work_on, end_work_on])
+        if(durationTime.rows.length) {
+            const { installation_time } = durationTime.rows[0]
+            
+            let date = new Date(`${start_work_on}`)
 
-        res.status(201).json(createOrder.rows)
+            date.setUTCHours(date.getHours() + installation_time)
+            
+            const end_work_on = date.toISOString()
+
+            const createOrder = await db.query('INSERT INTO orders (clocks_id, user_id, city_id, master_id, start_work_on, end_work_on) VALUES ($1, $2, $3, $4, $5, $6)', [clocks_id, user_id, city_id, master_id, start_work_on, end_work_on])
+
+            res.status(201).json(createOrder.rows)
+        }
 
     } catch(error) {
 
