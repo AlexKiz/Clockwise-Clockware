@@ -6,7 +6,7 @@ const db = require('../db')
 const postCity = async (req, res) => {
 
     try {
-        const {name} = req
+        const {name} = req.body
 
         const createCity = await db.query('INSERT INTO cities (name) VALUES ($1)', [name])
 
