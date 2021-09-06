@@ -30,22 +30,20 @@ const Auth = async (req, res) => {
 }
 
 const isAuth = async (req, res, next) => {
-
     if(req.method === 'OPTIONS') {
+
         return next()
     }
 
     try {
-        if(req.headers.Authorization) {
-
-        const accessToken = req.headers.Authorization.split(' ')[1]
-        
-        } else {
+        if(!req.headers.authorization) {
 
             res.status(401).send()
-        }
-        
-        jwt.verify(accessToken, proccess.env.PRIVAT_KEY)
+
+        } 
+        const accessToken = req.headers.authorization.split(' ')[1]
+
+        jwt.verify(accessToken, process.env.PRIVAT_KEY)
 
         next()
         
