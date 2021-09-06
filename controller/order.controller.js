@@ -1,6 +1,7 @@
 const { fdatasync } = require('fs')
 const { queryResult } = require('pg-promise')
 const db = require('../db')
+const transporter = require('../services/nodemailer.js')
 
 const postOrder = async (req, res) => {
         
@@ -31,6 +32,13 @@ const postOrder = async (req, res) => {
             const end_work_on = date.toISOString()
 
             const createOrder = await db.query('INSERT INTO orders (clocks_id, user_id, city_id, master_id, start_work_on, end_work_on) VALUES ($1, $2, $3, $4, $5, $6)', [clocks_id, user_id, city_id, master_id, start_work_on, end_work_on])
+
+            await transporter.sendMail({
+                from: '"Clockwise Clockware" <clockwiseclockwaremailbox@gmail.com>', 
+                to: email, 
+                subject: "Order confirmation", // Subject line
+                text: 'Order has been succesfully created!' // plain text body
+            });
 
             res.status(201).json(createOrder.rows)
         }

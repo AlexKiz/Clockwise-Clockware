@@ -1,12 +1,11 @@
 const Router = require('express')
 const router = new Router()
-const {postOrder, getOrder, getClocks, putOrder, deleteOrder} = require('../controller/order.controller')
+const {postOrder, getClocks} = require('../controller/order.controller')
+const {postOrderValidate} = require('../controller/order.validate')
 
-router.post('/order', postOrder)
-router.get('/order', getOrder)
+
+router.post('/order', [postOrderValidate], postOrder)
 router.get('/clocks', getClocks)
-router.put('/order', putOrder)
-router.delete('/order', deleteOrder)
 
 
-module.exports = router
+module.exports = router 
