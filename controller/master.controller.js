@@ -116,10 +116,10 @@ const getAvailableMastersForUpdate = async (req, res) => {
 const putMaster = async (req, res) => {
         
     try {
-        const {id, name, city_id} = req.body
-
+        const {id, name, city_id} = req.body.data
+        
         const updateMaster = await db.query('UPDATE masters SET name = $2, city_id = $3 WHERE id = $1', [id, name, city_id])
-
+        
         res.status(200).json(updateMaster.rows)
 
     } catch(error) {

@@ -29,7 +29,10 @@ const Auth = async (req, res) => {
     }
 }
 
+
+
 const isAuth = async (req, res, next) => {
+
     if(req.method === 'OPTIONS') {
 
         return next()

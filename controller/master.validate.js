@@ -31,7 +31,7 @@ const postMasterValidate = async(req, res, next) => {
 
 
 const putMasterValidate = async(req, res, next) => {
-
+    
     const {id, name, city_id} = req.body.data 
 
     const validationErrors = []
