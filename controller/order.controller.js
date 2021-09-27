@@ -2,6 +2,7 @@ const { fdatasync } = require('fs')
 const { queryResult } = require('pg-promise')
 const db = require('../db')
 const transporter = require('../services/nodemailer.js')
+const { v4: uuidv4 } = require('uuid');
 
 const postOrder = async (req, res) => {
         
@@ -31,13 +32,16 @@ const postOrder = async (req, res) => {
             
             const end_work_on = date.toISOString()
 
-            const createOrder = await db.query('INSERT INTO orders (clocks_id, user_id, city_id, master_id, start_work_on, end_work_on) VALUES ($1, $2, $3, $4, $5, $6)', [clocks_id, user_id, city_id, master_id, start_work_on, end_work_on])
+            const ratingIdentificator = uuidv4();
+
+            const createOrder = await db.query('INSERT INTO orders (clocks_id, user_id, city_id, master_id, start_work_on, end_work_on, uuid_id) VALUES ($1, $2, $3, $4, $5, $6, $7)', [clocks_id, user_id, city_id, master_id, start_work_on, end_work_on, ratingIdentificator])
 
             await transporter.sendMail({
                 from: '"Clockwise Clockware" <clockwiseclockwaremailbox@gmail.com>', 
                 to: email, 
-                subject: "Order confirmation", // Subject line
-                text: 'Order has been succesfully created!' // plain text body
+                subject: "Order confirmation",
+                text: 'Order has been succesfully created!', 
+                html: `<p>Please rate master's work <a href="${process.env.FRONT_URL}/rate/${ratingIdentificator}}">here</a></p>`
             });
 
             res.status(201).json(createOrder.rows)
@@ -54,9 +58,53 @@ const getOrder = async (req, res) => {
 
     try {
         
-        const readOrder = await db.query('SELECT orders.id as "orderId", orders.clocks_id as "clocksId", orders.user_id as "userId", orders.city_id as "cityId", orders.master_id as "masterId", (TO_CHAR(orders.start_work_on, \'YYYY-MM-DD,HH24:MI\')) as "startWorkOn", (TO_CHAR(orders.end_work_on, \'YYYY-MM-DD HH24:MI\')) as "endWorkOn", clocks.size as "clockSize", users.name as "userName", users.email as "userEmail", cities.name as "cityName", masters.name as "masterName" FROM orders INNER JOIN clocks ON orders.clocks_id = clocks.id INNER JOIN users ON orders.user_id = users.id INNER JOIN cities ON orders.city_id = cities.id INNER JOIN masters ON orders.master_id = masters.id')
+        const readOrder = await db.query('SELECT orders.id AS "orderId", orders.clocks_id AS "clocksId", orders.user_id AS "userId", orders.city_id AS "cityId", orders.master_id AS "masterId", (TO_CHAR(orders.start_work_on, \'YYYY-MM-DD,HH24:MI\')) AS "startWorkOn", (TO_CHAR(orders.end_work_on, \'YYYY-MM-DD HH24:MI\')) AS "endWorkOn", clocks.size AS "clockSize", users.name AS "userName", users.email AS "userEmail", cities.name AS "cityName", masters.name AS "masterName" FROM orders INNER JOIN clocks ON orders.clocks_id = clocks.id INNER JOIN users ON orders.user_id = users.id INNER JOIN cities ON orders.city_id = cities.id INNER JOIN masters ON orders.master_id = masters.id')
         
         res.status(200).json(readOrder.rows)
+
+    } catch(error) {
+
+        res.status(500).send()
+    }
+}
+
+const getOrderForRate = async (req, res) => { 
+    
+    try {
+        
+        const { ratingIdentificator } = req.query
+        
+        const readOrderForRate = await db.query('SELECT orders.id AS "orderId", orders.clocks_id AS "clocksId", orders.user_id AS "userId", orders.city_id AS "cityId", orders.master_id AS "masterId", (TO_CHAR(orders.start_work_on, \'YYYY-MM-DD,HH24:MI\')) AS "startWorkOn", (TO_CHAR(orders.end_work_on, \'YYYY-MM-DD HH24:MI\')) AS "endWorkOn", clocks.size AS "clockSize", users.name AS "userName", users.email AS "userEmail", cities.name AS "cityName", masters.name AS "masterName" FROM orders INNER JOIN clocks ON orders.clocks_id = clocks.id INNER JOIN users ON orders.user_id = users.id INNER JOIN cities ON orders.city_id = cities.id INNER JOIN masters ON orders.master_id = masters.id WHERE uuid_id = $1', [ratingIdentificator])
+
+        res.status(200).json(readOrderForRate.rows)
+
+    } catch(error) {
+
+        res.status(500).send()
+    }
+}
+
+const putRatedOrder = async (req, res) => {
+
+    try {
+
+        const {id, rating, master_id} = req.body
+        
+        const readMasterRating = await db.query('SELECT rated_sum, rated_quantity FROM masters WHERE id = $1', [master_id])
+        
+        const {rated_sum, rated_quantity} = readMasterRating.rows[0]
+        
+        const newRatedSum = rated_sum + rating
+        
+        const newRatedQuantity = rated_quantity + 1
+        
+        const newRating = Number((newRatedSum / newRatedQuantity).toFixed(1)) 
+        
+        const updateRatedOrder = await db.query("UPDATE orders SET order_rating = $1, uuid_id = 'Rated' WHERE id = $2",[rating, id])
+
+        const updateMasterRating = await db.query('UPDATE masters SET rating = $1, rated_sum = $2, rated_quantity = $3 WHERE id = $4',[newRating, newRatedSum, newRatedQuantity, master_id])
+        
+        res.status(200).json(updateRatedOrder.rows)
 
     } catch(error) {
 
@@ -111,4 +159,4 @@ const deleteOrder = async (req, res) => {
     }
 }
 
-module.exports = {postOrder, getOrder, getClocks, putOrder, deleteOrder}
+module.exports = {postOrder, getOrder, getOrderForRate, getClocks, putOrder, putRatedOrder, deleteOrder}
