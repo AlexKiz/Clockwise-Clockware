@@ -21,9 +21,9 @@ router.delete('/city', [isAuth, deleteCityValidate], deleteCity)
 
 router.post('/master', [isAuth, postMasterValidate], postMaster)
 router.get('/master', [isAuth], getMaster)
-router.get('/availableMastersforUpdate', [isAuth], getAvailableMastersForUpdate)
-router.put('/master', [isAuth, putMasterValidate], putMaster)
-router.delete('/master', [isAuth, deleteMasterValidate], deleteMaster)
+router.get('/availableMastersforUpdate', [isAuth], getAvailableMastersForUpdate) 
+router.put('/master', [isAuth, putMasterValidate], putMaster) 
+router.delete('/master', [isAuth, deleteMasterValidate], deleteMaster) 
 
 router.get('/order', [isAuth], getOrder)
 router.put('/order', [isAuth, putOrderValidate], putOrder)

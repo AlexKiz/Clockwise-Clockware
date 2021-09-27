@@ -1,9 +1,9 @@
 const db = require('../db')
-const validName = new RegExp(/^[A-Za-zА-Яа-я]{3,49}[\s]{1}[A-Za-zА-Яа-я]{3,50}$/)
+const validName = new RegExp(/^[A-Za-zА-Яа-я]{3,49}$|^[A-Za-zА-Яа-я]{3,49}[\s]{1}[A-Za-zА-Яа-я]{3,50}$/)
 
 const postMasterValidate = async(req, res, next) => {
 
-    const {name, city_id} = req.body
+    const {name, cities_id} = req.body
 
     const validationErrors = []
 
@@ -11,8 +11,8 @@ const postMasterValidate = async(req, res, next) => {
 
         validationErrors.push('Invalid master name')
     }
-
-    const validCityId = await db.query('SELECT * FROM cities WHERE id = $1', [city_id])
+    
+    const validCityId = await db.query(`SELECT * FROM cities WHERE id IN (${cities_id})`)
 
     if(!validCityId.rows.length) {
 
@@ -32,7 +32,7 @@ const postMasterValidate = async(req, res, next) => {
 
 const putMasterValidate = async(req, res, next) => {
     
-    const {id, name, city_id} = req.body.data 
+    const {id, name, cities_id} = req.body.data 
 
     const validationErrors = []
 
@@ -50,7 +50,7 @@ const putMasterValidate = async(req, res, next) => {
 
     }
 
-    const validCityId = await db.query('SELECT * FROM cities WHERE id = $1', [city_id])
+    const validCityId = await db.query(`SELECT * FROM cities WHERE id IN (${cities_id})`)
 
     if(!validCityId.rows.length) {
 

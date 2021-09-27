@@ -9,7 +9,7 @@ const postCity = async (req, res) => {
         const {name} = req.body
 
         const createCity = await db.query('INSERT INTO cities (name) VALUES ($1)', [name])
-
+        
         res.status(201).json(createCity.rows)
 
     } catch(error) {
@@ -54,6 +54,8 @@ const deleteCity = async (req, res) => {
 
     try {
         const {id} = req.body
+
+        const deleteMasterCities = await db.query('DELETE FROM masters_cities WHERE city_id = $1', [id])
 
         const deleteCity = await db.query('DELETE FROM cities WHERE id = $1', [id])
 

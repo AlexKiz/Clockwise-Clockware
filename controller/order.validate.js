@@ -64,7 +64,7 @@ const postOrderValidate = async(req, res, next) => {
 
 const putOrderValidate = async(req, res, next) => {
 
-    const {id, clocks_id, user_id, city_id, master_id, start_work_on} = req.body.data
+    const {id, clocks_id, user_id, city_id, master_id, start_work_on} = req.body
 
     const validationErrors = []
 
