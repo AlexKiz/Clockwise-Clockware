@@ -33,6 +33,19 @@ const getCity = async (req, res) => {
     }
 }
 
+const getCityForOrder = async (req, res) => {
+
+    try {
+        const readCityForOrder = await db.query('SELECT DISTINCT cities.* FROM cities, masters_cities WHERE cities.id=masters_cities.city_id')
+
+        res.status(200).json(readCityForOrder.rows)
+
+    } catch(error) {
+
+        res.status(500).send()
+    }
+}
+
 
 const putCity = async (req, res) => {
 
@@ -69,4 +82,4 @@ const deleteCity = async (req, res) => {
 
 
 
-module.exports = {postCity, getCity, putCity, deleteCity}
+module.exports = {postCity, getCity, getCityForOrder, putCity, deleteCity}

@@ -1,9 +1,9 @@
 const Router = require('express')
 const router = new Router()
-const {getCity} = require('../controller/city.controller')
+const {getCityForOrder} = require('../controller/city.controller')
 
 
-router.get('/city', getCity)
+router.get('/cityForOrder', getCityForOrder)
 
 
 module.exports = router 

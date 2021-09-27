@@ -2,7 +2,7 @@ const Router = require('express')
 const router = new Router()
 const {isAuth} = require('../controller/auth.controller')
 
-const {postCity, putCity, deleteCity} = require('../controller/city.controller')
+const {postCity, getCity, putCity, deleteCity} = require('../controller/city.controller')
 const {postCityValidate, putCityValidate, deleteCityValidate} = require('../controller/city.validate')
 
 const {postMaster, getMaster, getAvailableMastersForUpdate, putMaster, deleteMaster} = require('../controller/master.controller')
@@ -14,7 +14,7 @@ const {putOrderValidate, deleteOrderValidate} = require('../controller/order.val
 const {getUser, putUser, deleteUser} = require('../controller/user.controller')
 const {putUserValidate, deleteUserValidate} = require('../controller/user.validate')
 
-
+router.get('/city', [isAuth], getCity)
 router.post('/city', [isAuth, postCityValidate], postCity)
 router.put('/city', [isAuth, putCityValidate], putCity)
 router.delete('/city', [isAuth, deleteCityValidate], deleteCity)
