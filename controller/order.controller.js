@@ -41,7 +41,8 @@ const postOrder = async (req, res) => {
                 to: email, 
                 subject: "Order confirmation",
                 text: 'Order has been succesfully created!', 
-                html: `<p>Please rate master's work <a href="${process.env.FRONT_URL}/rate/${ratingIdentificator}}">here</a></p>`
+                html: ` <p>Your order has been succesfully created!</p>
+                        <p>Please rate master's work <a href="${process.env.FRONT_URL}/rate/${ratingIdentificator}">here</a></p>`
             });
 
             res.status(201).json(createOrder.rows)
