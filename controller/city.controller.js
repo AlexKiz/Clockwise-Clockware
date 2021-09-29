@@ -36,7 +36,7 @@ const getCity = async (req, res) => {
 const getCityForOrder = async (req, res) => {
 
     try {
-        const readCityForOrder = await db.query('SELECT DISTINCT cities.* FROM cities, masters_cities WHERE cities.id=masters_cities.city_id')
+        const readCityForOrder = await db.query('SELECT DISTINCT cities.* FROM cities, masters_cities WHERE cities.id = masters_cities.city_id')
 
         res.status(200).json(readCityForOrder.rows)
 

@@ -89,21 +89,21 @@ const putRatedOrder = async (req, res) => {
 
     try {
 
-        const {id, rating, master_id} = req.body
+        const {id, order_rated, master_id} = req.body
         
         const readMasterRating = await db.query('SELECT rated_sum, rated_quantity FROM masters WHERE id = $1', [master_id])
         
-        const {rated_sum, rated_quantity} = readMasterRating.rows[0]
+        const { rated_sum, rated_quantity } = readMasterRating.rows[0]
         
-        const newRatedSum = rated_sum + rating
+        const newRatedSum = rated_sum + order_rated
         
         const newRatedQuantity = rated_quantity + 1
         
-        const newRating = Number((newRatedSum / newRatedQuantity).toFixed(1)) 
+        const newRating = Number((newRatedSum / newRatedQuantity).toFixed(2)) 
         
-        const updateRatedOrder = await db.query("UPDATE orders SET order_rating = $1, uuid_id = 'Rated' WHERE id = $2",[rating, id])
-
-        const updateMasterRating = await db.query('UPDATE masters SET rating = $1, rated_sum = $2, rated_quantity = $3 WHERE id = $4',[newRating, newRatedSum, newRatedQuantity, master_id])
+        const updateMasterRating = await db.query('UPDATE masters SET rating = $1, rated_sum = $2, rated_quantity = $3 WHERE id = $4', [newRating, newRatedSum, newRatedQuantity, master_id])
+        
+        const updateRatedOrder = await db.query(`UPDATE orders SET order_rating = $1, uuid_id = 'Rated' WHERE id = $2`, [order_rated, id])
         
         res.status(200).json(updateRatedOrder.rows)
 
